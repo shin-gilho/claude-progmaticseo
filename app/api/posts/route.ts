@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/posts - 포스트 목록 조회 (필터링, 페이지네이션)
 export async function GET(request: NextRequest) {
   try {

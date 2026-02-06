@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { MainLayout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -26,12 +26,12 @@ export default function GeneratePage() {
   const [results, setResults] = useState<any>(null);
 
   // Fetch templates on mount
-  useState(() => {
+  useEffect(() => {
     fetch('/api/templates')
       .then((res) => res.json())
       .then((data) => setTemplates(data))
       .catch(console.error);
-  });
+  }, []);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
