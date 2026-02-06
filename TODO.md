@@ -243,10 +243,10 @@
 **Commit**: `feat: implement state management`
 
 ### 6.2 Custom Hooks (`hooks/`)
-- [ ] `use-templates.ts` - 템플릿 CRUD
-- [ ] `use-generate.ts` - 생성 프로세스
-- [ ] `use-settings.ts` - 설정 관리
-- [ ] `use-progress.ts` - 진행 상황 추적
+- [x] `use-templates.ts` - 템플릿 CRUD
+- [x] `use-generate.ts` - 생성 프로세스
+- [x] `use-settings.ts` - 설정 관리
+- [x] `use-progress.ts` - 진행 상황 추적
 
 **Commit**: `feat: implement custom hooks`
 
@@ -308,11 +308,11 @@
 | Phase 3: API Routes | Complete ✅ | 8/8 |
 | Phase 4: UI Components | Complete ✅ | 6/6 |
 | Phase 5: Pages | Complete ✅ | 5/5 |
-| Phase 6: State & Hooks | Partial | 1/2 |
+| Phase 6: State & Hooks | Complete ✅ | 2/2 |
 | Phase 7: Error & Polish | Optional | 0/3 |
 | Phase 8: Test & Deploy | Pending | 0/2 |
 
-**Overall Progress**: 36/47 tasks completed (77%)
+**Overall Progress**: 40/47 tasks completed (85%)
 
 **MVP 완성! 🎉**
 
