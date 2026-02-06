@@ -13,8 +13,8 @@ export default function SettingsPage() {
   const [claudeApiKey, setClaudeApiKey] = useState('');
   const [geminiApiKey, setGeminiApiKey] = useState('');
   const [defaultAiModel, setDefaultAiModel] = useState('claude');
-  const [claudeModel, setClaudeModel] = useState('claude-3-5-sonnet-latest');
-  const [geminiModel, setGeminiModel] = useState('gemini-1.5-flash');
+  const [claudeModel, setClaudeModel] = useState('claude-3-5-sonnet-20241022');
+  const [geminiModel, setGeminiModel] = useState('gemini-1.5-pro');
   const [batchSize, setBatchSize] = useState(5);
   const [isSaving, setIsSaving] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
@@ -33,8 +33,8 @@ export default function SettingsPage() {
           setWpSiteUrl(settings.wpSiteUrl || '');
           setWpUsername(settings.wpUsername || '');
           setDefaultAiModel(settings.defaultAiModel || 'claude');
-          setClaudeModel(settings.claudeModel || 'claude-3-5-sonnet-latest');
-          setGeminiModel(settings.geminiModel || 'gemini-1.5-flash');
+          setClaudeModel(settings.claudeModel || 'claude-3-5-sonnet-20241022');
+          setGeminiModel(settings.geminiModel || 'gemini-1.5-pro');
           setBatchSize(settings.batchSize || 5);
         }
       }
@@ -192,9 +192,9 @@ export default function SettingsPage() {
                   onChange={(e) => setClaudeModel(e.target.value)}
                   className="w-full rounded-md border bg-background px-3 py-2"
                 >
-                  <option value="claude-3-5-sonnet-latest">Claude 3.5 Sonnet (권장)</option>
-                  <option value="claude-3-5-haiku-latest">Claude 3.5 Haiku (빠름)</option>
-                  <option value="claude-3-opus-latest">Claude 3 Opus (고품질)</option>
+                  <option value="claude-3-5-sonnet-20241022">Claude 3.5 Sonnet (권장)</option>
+                  <option value="claude-3-5-haiku-20241022">Claude 3.5 Haiku (빠름)</option>
+                  <option value="claude-3-opus-20240229">Claude 3 Opus (고품질)</option>
                 </select>
               </div>
               <div>
@@ -213,8 +213,8 @@ export default function SettingsPage() {
                   onChange={(e) => setGeminiModel(e.target.value)}
                   className="w-full rounded-md border bg-background px-3 py-2"
                 >
-                  <option value="gemini-1.5-flash">Gemini 1.5 Flash (빠름)</option>
-                  <option value="gemini-1.5-pro">Gemini 1.5 Pro (고품질)</option>
+                  <option value="gemini-1.5-pro">Gemini 1.5 Pro (권장)</option>
+                  <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash (실험)</option>
                 </select>
               </div>
               <div>

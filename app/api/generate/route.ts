@@ -107,11 +107,11 @@ export async function POST(request: NextRequest) {
         let aiResponse: string;
         if (aiModel === 'claude') {
           aiResponse = await generateWithClaude(fullPrompt, apiKey, {
-            model: settings.claudeModel || 'claude-3-5-sonnet-latest',
+            model: settings.claudeModel || 'claude-3-5-sonnet-20241022',
           });
         } else {
           aiResponse = await generateWithGemini(fullPrompt, apiKey, {
-            model: settings.geminiModel || 'gemini-1.5-flash',
+            model: settings.geminiModel || 'gemini-1.5-pro',
           });
         }
 

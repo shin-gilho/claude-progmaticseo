@@ -8,7 +8,7 @@ export interface ClaudeOptions {
 }
 
 const DEFAULT_OPTIONS: ClaudeOptions = {
-  model: 'claude-3-5-sonnet-latest',
+  model: 'claude-3-5-sonnet-20241022',
   maxTokens: 4096,
   temperature: 0.7,
 };

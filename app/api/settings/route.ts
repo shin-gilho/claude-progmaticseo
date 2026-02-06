@@ -88,8 +88,8 @@ export async function PUT(request: NextRequest) {
           claudeApiKey: claudeApiKey ? encrypt(claudeApiKey) : null,
           geminiApiKey: geminiApiKey ? encrypt(geminiApiKey) : null,
           defaultAiModel: defaultAiModel || 'claude',
-          claudeModel: claudeModel || 'claude-3-5-sonnet-latest',
-          geminiModel: geminiModel || 'gemini-1.5-flash',
+          claudeModel: claudeModel || 'claude-3-5-sonnet-20241022',
+          geminiModel: geminiModel || 'gemini-1.5-pro',
           batchSize: batchSize || 5,
         },
       });
