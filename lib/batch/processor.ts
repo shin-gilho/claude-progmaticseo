@@ -13,7 +13,7 @@ export const DEFAULT_BATCH_CONFIG: BatchConfig = {
   delayBetweenBatches: 2000,
   maxRetries: 3,
   retryDelay: 1000,
-  timeout: 30000,
+  timeout: 120000, // 2분으로 증가
 };
 
 export interface BatchItem<T> {
