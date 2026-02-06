@@ -1,8 +1,9 @@
-질병코드: {{disease_code}}
+질병코드: {{keyword}}
 
 다음 정보를 JSON 형태로 생성해주세요:
 
 {
+  "disease_code": "{{keyword}}",
   "symptom_question": "{{증상을 묻는 자연스러운 질문 (예: 배가 아파서, 기침이 심해서)}}",
   "disease_name_kr": "{{질병명 한글}}",
   "disease_name_en": "{{질병명 영문}}",

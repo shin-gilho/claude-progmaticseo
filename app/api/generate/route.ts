@@ -103,12 +103,16 @@ export async function POST(request: NextRequest) {
         // Build prompt with keyword
         const fullPrompt = buildPromptWithKeyword(promptContent, keyword);
 
-        // Call AI API
+        // Call AI API with selected model
         let aiResponse: string;
         if (aiModel === 'claude') {
-          aiResponse = await generateWithClaude(fullPrompt, apiKey);
+          aiResponse = await generateWithClaude(fullPrompt, apiKey, {
+            model: settings.claudeModel || 'claude-3-5-sonnet-latest',
+          });
         } else {
-          aiResponse = await generateWithGemini(fullPrompt, apiKey);
+          aiResponse = await generateWithGemini(fullPrompt, apiKey, {
+            model: settings.geminiModel || 'gemini-1.5-flash',
+          });
         }
 
         // Parse AI response

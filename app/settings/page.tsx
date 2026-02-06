@@ -13,6 +13,8 @@ export default function SettingsPage() {
   const [claudeApiKey, setClaudeApiKey] = useState('');
   const [geminiApiKey, setGeminiApiKey] = useState('');
   const [defaultAiModel, setDefaultAiModel] = useState('claude');
+  const [claudeModel, setClaudeModel] = useState('claude-3-5-sonnet-latest');
+  const [geminiModel, setGeminiModel] = useState('gemini-1.5-flash');
   const [batchSize, setBatchSize] = useState(5);
   const [isSaving, setIsSaving] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
@@ -31,6 +33,8 @@ export default function SettingsPage() {
           setWpSiteUrl(settings.wpSiteUrl || '');
           setWpUsername(settings.wpUsername || '');
           setDefaultAiModel(settings.defaultAiModel || 'claude');
+          setClaudeModel(settings.claudeModel || 'claude-3-5-sonnet-latest');
+          setGeminiModel(settings.geminiModel || 'gemini-1.5-flash');
           setBatchSize(settings.batchSize || 5);
         }
       }
@@ -52,6 +56,8 @@ export default function SettingsPage() {
           claudeApiKey: claudeApiKey || undefined,
           geminiApiKey: geminiApiKey || undefined,
           defaultAiModel,
+          claudeModel,
+          geminiModel,
           batchSize,
         }),
       });
@@ -180,6 +186,18 @@ export default function SettingsPage() {
                 />
               </div>
               <div>
+                <label className="mb-2 block text-sm font-medium">Claude 모델</label>
+                <select
+                  value={claudeModel}
+                  onChange={(e) => setClaudeModel(e.target.value)}
+                  className="w-full rounded-md border bg-background px-3 py-2"
+                >
+                  <option value="claude-3-5-sonnet-latest">Claude 3.5 Sonnet (권장)</option>
+                  <option value="claude-3-5-haiku-latest">Claude 3.5 Haiku (빠름)</option>
+                  <option value="claude-3-opus-latest">Claude 3 Opus (고품질)</option>
+                </select>
+              </div>
+              <div>
                 <label className="mb-2 block text-sm font-medium">Gemini API Key</label>
                 <Input
                   type="password"
@@ -187,6 +205,17 @@ export default function SettingsPage() {
                   onChange={(e) => setGeminiApiKey(e.target.value)}
                   placeholder="Gemini API Key"
                 />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium">Gemini 모델</label>
+                <select
+                  value={geminiModel}
+                  onChange={(e) => setGeminiModel(e.target.value)}
+                  className="w-full rounded-md border bg-background px-3 py-2"
+                >
+                  <option value="gemini-1.5-flash">Gemini 1.5 Flash (빠름)</option>
+                  <option value="gemini-1.5-pro">Gemini 1.5 Pro (고품질)</option>
+                </select>
               </div>
               <div>
                 <label className="mb-2 block text-sm font-medium">기본 AI 모델</label>
