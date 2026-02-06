@@ -1,0 +1,103 @@
+질병코드: {{disease_code}}
+
+다음 정보를 JSON 형태로 생성해주세요:
+
+{
+  "symptom_question": "{{증상을 묻는 자연스러운 질문 (예: 배가 아파서, 기침이 심해서)}}",
+  "disease_name_kr": "{{질병명 한글}}",
+  "disease_name_en": "{{질병명 영문}}",
+  "disease_overview": "{{질병 개요 1-2문장}}",
+  "insurance_possible": "가능 또는 제한적 또는 불가능",
+  "insurance_note": "{{보험 청구 관련 짧은 주의사항}}",
+  "main_symptoms_summary": "{{증상 요약 (20자 이내)}}",
+  "insurance_status": "{{청구 가능 여부 상세 (40자 이내)}}",
+  "main_causes": "{{원인1}}, {{원인2}}, {{원인3}} 등",
+  "disease_usage_explanation": "{{이 코드가 언제 사용되는지 2-3문장 설명}}",
+  "usage_criteria": [
+    "{{사용 기준 1}}",
+    "{{사용 기준 2}}",
+    "{{사용 기준 3}}",
+    "{{사용 기준 4}}",
+    "{{사용 기준 5}}"
+  ],
+  "disease_tip": "{{질병코드 관련 실용적인 팁 (80자 내외)}}",
+  "disease_category": "{{질병 카테고리 (예: 복통, 호흡기질환)}}",
+  "detailed_causes": [
+    {
+      "category": "{{원인 카테고리1}}",
+      "description": "{{상세 설명}}"
+    },
+    {
+      "category": "{{원인 카테고리2}}",
+      "description": "{{상세 설명}}"
+    },
+    {
+      "category": "{{원인 카테고리3}}",
+      "description": "{{상세 설명}}"
+    }
+  ],
+  "detailed_symptoms": [
+    "{{증상1 상세 설명}}",
+    "{{증상2 상세 설명}}",
+    "{{증상3 상세 설명}}",
+    "{{증상4 상세 설명}}",
+    "{{증상5 상세 설명}}"
+  ],
+  "treatment_process": "{{진단 및 치료 과정을 HTML <p> 태그로 3단계 구조 (각 단계 150자 내외)}}",
+  "insurance_claim_intro": "{{실비 청구 가능 여부 도입 문장}}",
+  "insurance_table": [
+    {
+      "situation": "외래 진료 + 약 처방",
+      "possible": "⭕ 가능",
+      "note": "진료비 + 약제비 모두 청구"
+    },
+    {
+      "situation": "{{검사 종류}}",
+      "possible": "⭕ 가능",
+      "note": "검사비 포함 전액 청구 유리"
+    },
+    {
+      "situation": "응급실 내원",
+      "possible": "{{⭕/△/❌}}",
+      "note": "{{비고}}"
+    },
+    {
+      "situation": "입원 치료",
+      "possible": "{{⭕/△/❌}}",
+      "note": "{{비고}}"
+    },
+    {
+      "situation": "{{특수 상황}}",
+      "possible": "{{⭕/△/❌}}",
+      "note": "{{비고}}"
+    }
+  ],
+  "insurance_warning": "{{보험 청구 시 주의사항 (100자 내외, <strong> 태그 사용 가능)}}",
+  "custom_faq": [
+    {
+      "question": "{{질병코드}}로 여러 번 진료받으면 실비 청구가 거부되나요?",
+      "answer": "{{답변 (150자 내외)}}"
+    },
+    {
+      "question": "{{질병코드}} 코드로 응급실에 갔는데 실비 청구가 되나요?",
+      "answer": "{{답변 (150자 내외)}}"
+    },
+    {
+      "question": "질병코드 {{질병코드}}는 암보험이나 진단비 특약에서도 보장되나요?",
+      "answer": "{{답변 (150자 내외)}}"
+    },
+    {
+      "question": "{{질병 관련 자주 묻는 질문4}}",
+      "answer": "{{답변}}"
+    }
+  ],
+  "insurance_coverage_note": "{{이 질병코드의 보험 보장 여부 요약 (30자 이내)}}",
+  "claim_rejection_cases": "{{청구 거부 사례 3가지를 HTML <p><strong> 구조로 작성 (각 200자 내외)}}",
+  "summary_description": "{{마무리용 질병 설명 1문장}}"
+}
+
+조건:
+1. 모든 텍스트는 "~합니다" "~입니다" 체 사용
+2. HTML 태그는 <p>, <strong>, <ul>, <li>만 사용
+3. 의학적으로 정확한 정보 제공
+4. 실손보험 약관 기준 반영

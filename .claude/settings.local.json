@@ -9,7 +9,9 @@
       "Bash(git init:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: implement complete programmatic SEO generator\n\n- Setup Next.js 14 project with TypeScript and Tailwind CSS\n- Implement Prisma database with SQLite \\(Template, Prompt, Post, Settings models\\)\n- Create all API routes for CRUD operations\n- Implement core libraries:\n  * Template engine with variable extraction and rendering\n  * AI API clients \\(Claude and Gemini\\)\n  * WordPress REST API integration\n  * Excel parser with validation\n  * Batch processor with retry logic\n  * Security utilities \\(encryption, sanitization\\)\n- Build complete UI:\n  * Dashboard with real-time statistics\n  * Template management \\(CRUD with variable detection\\)\n  * 5-step content generation workflow\n  * History page with status tracking\n  * Settings page with WordPress connection test\n- Implement layout components with sidebar navigation\n\nCore features working:\n- Template CRUD with {{variable}} syntax\n- AI-powered content generation \\(Claude/Gemini\\)\n- Excel file upload and parsing\n- Batch processing \\(5 items at a time\\)\n- WordPress auto-publishing \\(draft status\\)\n- Generation history tracking\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(sqlite3:*)",
+      "Bash(node:*)"
     ]
   }
 }
