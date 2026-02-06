@@ -8,10 +8,10 @@ export async function POST() {
     const settings = await prisma.settings.findFirst();
 
     if (!settings) {
-      return NextResponse.json(
-        { success: false, error: 'WordPress settings not configured' },
-        { status: 400 }
-      );
+      return NextResponse.json({
+        success: false,
+        message: 'WordPress 설정이 아직 저장되지 않았습니다. 설정을 먼저 저장해주세요.'
+      });
     }
 
     const isConnected = await testConnection({
@@ -21,18 +21,22 @@ export async function POST() {
     });
 
     if (isConnected) {
-      return NextResponse.json({ success: true, message: 'Connection successful' });
+      return NextResponse.json({
+        success: true,
+        message: 'WordPress 연결에 성공했습니다!'
+      });
     } else {
-      return NextResponse.json(
-        { success: false, error: 'Connection failed. Check your credentials.' },
-        { status: 400 }
-      );
+      return NextResponse.json({
+        success: false,
+        message: 'WordPress 연결에 실패했습니다. 사이트 URL, 사용자명, 애플리케이션 비밀번호를 확인해주세요.'
+      });
     }
   } catch (error) {
     console.error('Error testing WordPress connection:', error);
-    return NextResponse.json(
-      { success: false, error: 'Connection test failed' },
-      { status: 500 }
-    );
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({
+      success: false,
+      message: `연결 테스트 중 오류가 발생했습니다: ${errorMessage}`
+    });
   }
 }

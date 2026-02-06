@@ -64,13 +64,8 @@ async function wpRequest<T>(
 }
 
 export async function testConnection(auth: WPAuth): Promise<boolean> {
-  try {
-    await wpRequest<{ id: number }>(auth, '/users/me');
-    return true;
-  } catch (error) {
-    console.error('WordPress connection test failed:', error);
-    return false;
-  }
+  await wpRequest<{ id: number }>(auth, '/users/me');
+  return true;
 }
 
 export async function createPost(auth: WPAuth, postData: WPPostData): Promise<WPPost> {

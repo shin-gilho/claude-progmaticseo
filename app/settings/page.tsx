@@ -136,7 +136,7 @@ export default function SettingsPage() {
                   비밀번호에서 생성할 수 있습니다.
                 </p>
               </div>
-              <div className="flex gap-2">
+              <div className="space-y-3">
                 <Button
                   variant="outline"
                   onClick={handleTestConnection}
@@ -146,13 +146,18 @@ export default function SettingsPage() {
                 </Button>
                 {testResult && (
                   <div
-                    className={`flex items-center rounded-md px-3 py-2 text-sm ${
+                    className={`rounded-md border px-4 py-3 text-sm ${
                       testResult.success
-                        ? 'bg-green-50 text-green-700'
-                        : 'bg-red-50 text-red-700'
+                        ? 'border-green-200 bg-green-50 text-green-700'
+                        : 'border-red-200 bg-red-50 text-red-700'
                     }`}
                   >
-                    {testResult.message}
+                    <div className="font-medium mb-1">
+                      {testResult.success ? '✓ 연결 성공' : '✗ 연결 실패'}
+                    </div>
+                    <div className="text-xs break-words">
+                      {testResult.message}
+                    </div>
                   </div>
                 )}
               </div>
