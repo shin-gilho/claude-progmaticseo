@@ -38,6 +38,8 @@ export async function PUT(request: NextRequest) {
       claudeApiKey,
       geminiApiKey,
       defaultAiModel,
+      claudeModel,
+      geminiModel,
       batchSize,
     } = body;
 
@@ -58,6 +60,8 @@ export async function PUT(request: NextRequest) {
       data.geminiApiKey = encrypt(geminiApiKey);
     }
     if (defaultAiModel !== undefined) data.defaultAiModel = defaultAiModel;
+    if (claudeModel !== undefined) data.claudeModel = claudeModel;
+    if (geminiModel !== undefined) data.geminiModel = geminiModel;
     if (batchSize !== undefined) data.batchSize = batchSize;
 
     let settings;
@@ -84,6 +88,8 @@ export async function PUT(request: NextRequest) {
           claudeApiKey: claudeApiKey ? encrypt(claudeApiKey) : null,
           geminiApiKey: geminiApiKey ? encrypt(geminiApiKey) : null,
           defaultAiModel: defaultAiModel || 'claude',
+          claudeModel: claudeModel || 'claude-3-5-sonnet-latest',
+          geminiModel: geminiModel || 'gemini-1.5-flash',
           batchSize: batchSize || 5,
         },
       });
