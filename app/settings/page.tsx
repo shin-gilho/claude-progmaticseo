@@ -32,6 +32,9 @@ export default function SettingsPage() {
         if (settings) {
           setWpSiteUrl(settings.wpSiteUrl || '');
           setWpUsername(settings.wpUsername || '');
+          setWpPassword(settings.wpPassword || '');
+          setClaudeApiKey(settings.claudeApiKey || '');
+          setGeminiApiKey(settings.geminiApiKey || '');
           setDefaultAiModel(settings.defaultAiModel || 'claude');
           setClaudeModel(settings.claudeModel || 'claude-3-5-sonnet-20241022');
           setGeminiModel(settings.geminiModel || 'gemini-1.5-pro');
