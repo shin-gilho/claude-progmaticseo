@@ -31,19 +31,19 @@ model Prompt {
 }
 
 model Post {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   title        String
   content      String
   keyword      String
-  status       String   // "pending", "success", "failed"
+  status       String    // "pending", "success", "failed"
   wpPostId     Int?
   wpUrl        String?
   errorMessage String?
   templateId   String
-  template     Template @relation(fields: [templateId], references: [id])
-  promptId     String
-  prompt       Prompt   @relation(fields: [promptId], references: [id])
-  createdAt    DateTime @default(now())
+  template     Template  @relation(fields: [templateId], references: [id])
+  promptId     String?
+  prompt       Prompt?   @relation(fields: [promptId], references: [id])
+  createdAt    DateTime  @default(now())
 }
 
 model Settings {

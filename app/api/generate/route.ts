@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
             wpPostId,
             wpUrl,
             templateId,
-            promptId: promptId || '',
+            promptId: promptId || null,
           },
         });
 
@@ -195,7 +195,7 @@ export async function POST(request: NextRequest) {
             status: 'failed',
             errorMessage: item.error,
             templateId,
-            promptId: promptId || '',
+            promptId: promptId || null,
           },
         });
 
