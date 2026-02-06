@@ -8,7 +8,7 @@ export interface ClaudeOptions {
 }
 
 const DEFAULT_OPTIONS: ClaudeOptions = {
-  model: 'claude-3-5-sonnet-20241022',
+  model: 'claude-sonnet-4-20250514',
   maxTokens: 4096,
   temperature: 0.7,
 };
@@ -62,7 +62,14 @@ export function buildPromptWithKeyword(
   keyword: string,
   additionalContext?: Record<string, string>
 ): string {
+  // Replace {{keyword}} (English)
   let prompt = basePrompt.replace(/\{\{keyword\}\}/gi, keyword);
+
+  // Replace {{키워드}} (Korean)
+  prompt = prompt.replace(/\{\{키워드\}\}/g, keyword);
+
+  // Replace {{disease_code}} (common alias)
+  prompt = prompt.replace(/\{\{disease_code\}\}/gi, keyword);
 
   if (additionalContext) {
     for (const [key, value] of Object.entries(additionalContext)) {

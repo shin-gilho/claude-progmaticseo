@@ -8,7 +8,7 @@ export interface GeminiOptions {
 }
 
 const DEFAULT_OPTIONS: GeminiOptions = {
-  model: 'gemini-1.5-pro',
+  model: 'gemini-2.5-flash',
   maxTokens: 8192,
   temperature: 0.7,
 };

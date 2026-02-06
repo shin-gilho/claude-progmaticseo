@@ -872,6 +872,22 @@ npm run lint
 
 ---
 
+## Troubleshooting Guides
+
+### Template Variable Substitution Issues
+
+If you experience issues with template variables not being substituted (showing empty values), see the comprehensive guide:
+
+**📖 [VARIABLE_FIX_GUIDE.md](./VARIABLE_FIX_GUIDE.md)**
+
+**Quick Summary:**
+- The system supports `{{keyword}}`, `{{키워드}}`, and `{{disease_code}}`
+- Update your prompts to use `{{keyword}}` and provide clear JSON structure to AI
+- Update your templates to use consistent variable names
+- Ensure AI returns all required fields in JSON response
+
+---
+
 ## Resources
 
 - [Next.js Documentation](https://nextjs.org/docs)

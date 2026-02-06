@@ -89,7 +89,7 @@ export async function PUT(request: NextRequest) {
           geminiApiKey: geminiApiKey ? encrypt(geminiApiKey) : null,
           defaultAiModel: defaultAiModel || 'claude',
           claudeModel: claudeModel || 'claude-3-5-sonnet-20241022',
-          geminiModel: geminiModel || 'gemini-1.5-pro',
+          geminiModel: geminiModel || 'gemini-2.5-flash',
           batchSize: batchSize || 5,
         },
       });

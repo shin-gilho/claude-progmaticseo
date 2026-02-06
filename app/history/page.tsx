@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { formatDateTime } from '@/lib/utils';
 import { ExternalLink, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { prisma } from '@/lib/db';
+import { ErrorMessageCell } from '@/components/history/error-message-cell';
 
 async function getPosts(status?: string) {
   const where = status && ['success', 'failed', 'pending'].includes(status)
@@ -58,6 +59,7 @@ export default async function HistoryPage() {
                 <th className="px-4 py-3 text-left text-sm font-medium">상태</th>
                 <th className="px-4 py-3 text-left text-sm font-medium">제목</th>
                 <th className="px-4 py-3 text-left text-sm font-medium">키워드</th>
+                <th className="px-4 py-3 text-left text-sm font-medium">에러</th>
                 <th className="px-4 py-3 text-left text-sm font-medium">생성일</th>
                 <th className="px-4 py-3 text-left text-sm font-medium">WordPress</th>
               </tr>
@@ -65,7 +67,7 @@ export default async function HistoryPage() {
             <tbody>
               {posts.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
+                  <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
                     아직 생성 기록이 없습니다.
                   </td>
                 </tr>
@@ -88,6 +90,11 @@ export default async function HistoryPage() {
                       </td>
                       <td className="px-4 py-3">
                         <code className="text-sm">{post.keyword}</code>
+                      </td>
+                      <td className="px-4 py-3">
+                        <ErrorMessageCell
+                          errorMessage={post.status === 'failed' ? post.errorMessage : null}
+                        />
                       </td>
                       <td className="px-4 py-3 text-sm text-muted-foreground">
                         {formatDateTime(post.createdAt)}

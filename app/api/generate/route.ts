@@ -109,21 +109,23 @@ export async function POST(request: NextRequest) {
         let aiResponse: string;
         if (aiModel === 'claude') {
           aiResponse = await generateWithClaude(fullPrompt, apiKey, {
-            model: settings.claudeModel || 'claude-3-5-sonnet-20241022',
+            model: settings.claudeModel || 'claude-sonnet-4-20250514',
           });
         } else {
           aiResponse = await generateWithGemini(fullPrompt, apiKey, {
-            model: settings.geminiModel || 'gemini-1.5-pro',
+            model: settings.geminiModel || 'gemini-2.5-flash',
           });
         }
 
         // Parse AI response
         const parsedResponse = parseAIResponse(aiResponse);
 
-        // Render template
+        // Render template with multiple variable aliases for compatibility
         const renderedContent = renderTemplate(template.htmlContent, {
           ...parsedResponse,
-          keyword,
+          keyword,           // English variable
+          disease_code: keyword,  // Common alias
+          키워드: keyword,        // Korean variable
         });
 
         // Generate title
