@@ -27,7 +27,15 @@ export async function GET(request: NextRequest) {
     const [posts, total] = await Promise.all([
       prisma.post.findMany({
         where,
-        include: {
+        select: {
+          id: true,
+          title: true,
+          keyword: true,
+          status: true,
+          wpUrl: true,
+          wpPostId: true,
+          errorMessage: true,
+          createdAt: true,
           template: { select: { id: true, name: true } },
           prompt: { select: { id: true, name: true } },
         },

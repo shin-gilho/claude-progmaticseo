@@ -1,3 +1,4 @@
+import Handlebars from 'handlebars';
 import { extractVariables } from './variable-extractor';
 
 function escapeRegex(str: string): string {
@@ -6,22 +7,25 @@ function escapeRegex(str: string): string {
 
 export function renderTemplate(
   template: string,
-  variables: Record<string, string>
+  variables: Record<string, any> // Changed from Record<string, string> to support arrays/objects
 ): string {
-  let result = template;
+  try {
+    // Compile template with Handlebars
+    const compiledTemplate = Handlebars.compile(template, {
+      noEscape: true, // Don't escape HTML since we're generating HTML content
+      strict: false,  // Don't throw on missing properties
+    });
 
-  for (const [key, value] of Object.entries(variables)) {
-    // Allow whitespace around variable name
-    const regex = new RegExp(`\\{\\{\\s*${escapeRegex(key)}\\s*\\}\\}`, 'g');
-    result = result.replace(regex, value);
+    return compiledTemplate(variables);
+  } catch (error) {
+    console.error('Handlebars rendering error:', error);
+    throw new Error(`Template rendering failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
-
-  return result;
 }
 
 export function renderTemplateWithFallback(
   template: string,
-  variables: Record<string, string>,
+  variables: Record<string, any>,
   fallback: string = '[N/A]'
 ): string {
   const allVariables = extractVariables(template);
@@ -38,10 +42,10 @@ export function renderTemplateWithFallback(
 
 export function previewTemplate(
   template: string,
-  sampleData?: Record<string, string>
+  sampleData?: Record<string, any>
 ): string {
   const variables = extractVariables(template);
-  const previewData: Record<string, string> = {};
+  const previewData: Record<string, any> = {};
 
   for (const v of variables) {
     previewData[v] = sampleData?.[v] || `[${v}]`;

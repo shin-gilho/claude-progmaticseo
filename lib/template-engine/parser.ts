@@ -1,4 +1,4 @@
-export function parseAIResponse(response: string): Record<string, string> {
+export function parseAIResponse(response: string): Record<string, any> {
   // Extract JSON from code blocks if present
   const jsonBlockMatch = response.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
   const jsonString = jsonBlockMatch ? jsonBlockMatch[1] : response;
@@ -6,17 +6,14 @@ export function parseAIResponse(response: string): Record<string, string> {
   try {
     const parsed = JSON.parse(jsonString.trim());
 
-    // Convert all values to strings
-    const result: Record<string, string> = {};
+    // Preserve types for Handlebars template engine
+    const result: Record<string, any> = {};
     for (const [key, value] of Object.entries(parsed)) {
-      if (Array.isArray(value)) {
-        result[key] = value.join(', ');
-      } else if (typeof value === 'object' && value !== null) {
-        result[key] = JSON.stringify(value);
-      } else if (value === null || value === undefined) {
+      if (value === null || value === undefined) {
         result[key] = '';
       } else {
-        result[key] = String(value);
+        // Keep arrays and objects as-is for Handlebars
+        result[key] = value;
       }
     }
 
@@ -34,8 +31,8 @@ export function parseAIResponse(response: string): Record<string, string> {
   }
 }
 
-function extractKeyValuePairs(text: string): Record<string, string> {
-  const result: Record<string, string> = {};
+function extractKeyValuePairs(text: string): Record<string, any> {
+  const result: Record<string, any> = {};
   const lines = text.split('\n');
 
   for (const line of lines) {
@@ -51,7 +48,7 @@ function extractKeyValuePairs(text: string): Record<string, string> {
 }
 
 export function validateAIResponse(
-  response: Record<string, string>,
+  response: Record<string, any>,
   requiredVariables: string[]
 ): { isValid: boolean; missing: string[] } {
   const missing = requiredVariables.filter((v) => !(v in response) || !response[v]);

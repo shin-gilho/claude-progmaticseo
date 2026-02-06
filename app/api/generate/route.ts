@@ -71,8 +71,10 @@ export async function POST(request: NextRequest) {
     }
 
     const apiKey = aiModel === 'claude' ? settings.claudeApiKey : settings.geminiApiKey;
-    if (!apiKey) {
-      return NextResponse.json({ error: `${aiModel} API key not configured` }, { status: 400 });
+    if (!apiKey || apiKey.trim() === '') {
+      return NextResponse.json({
+        error: `${aiModel} API key not configured. Please add it in Settings.`
+      }, { status: 400 });
     }
 
     // Get template variables
