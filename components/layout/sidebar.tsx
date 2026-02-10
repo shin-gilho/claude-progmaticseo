@@ -6,9 +6,11 @@ import { cn } from '@/lib/utils';
 import {
   LayoutDashboard,
   FileText,
+  MessageSquare,
   Sparkles,
   History,
   Settings,
+  BarChart3,
 } from 'lucide-react';
 
 const navItems = [
@@ -23,6 +25,11 @@ const navItems = [
     icon: FileText,
   },
   {
+    href: '/prompts',
+    label: '프롬프트 관리',
+    icon: MessageSquare,
+  },
+  {
     href: '/generate',
     label: '콘텐츠 생성',
     icon: Sparkles,
@@ -31,6 +38,11 @@ const navItems = [
     href: '/history',
     label: '생성 기록',
     icon: History,
+  },
+  {
+    href: '/api-usage',
+    label: 'API 사용량 확인',
+    icon: BarChart3,
   },
   {
     href: '/settings',

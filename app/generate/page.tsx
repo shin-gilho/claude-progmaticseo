@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
 import { useDropzone } from 'react-dropzone';
 import { Upload, FileText, Sparkles } from 'lucide-react';
+import { PromptSelector } from '@/components/generate/prompt-selector';
 
 type Step = 1 | 2 | 3 | 4 | 5;
 
@@ -217,32 +218,12 @@ export default function GeneratePage() {
             {currentStep === 2 && (
               <div>
                 <h3 className="mb-6 text-lg font-semibold">Step 2: AI 프롬프트 작성</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="mb-2 block text-sm font-medium">AI 모델</label>
-                    <select
-                      value={aiModel}
-                      onChange={(e) => setAiModel(e.target.value as any)}
-                      className="w-full rounded-md border bg-background px-3 py-2"
-                    >
-                      <option value="claude">Claude</option>
-                      <option value="gemini">Gemini</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-sm font-medium">프롬프트</label>
-                    <Textarea
-                      value={customPrompt}
-                      onChange={(e) => setCustomPrompt(e.target.value)}
-                      placeholder={`키워드: {{keyword}}\n\n위 키워드에 대한 SEO 콘텐츠를 JSON 형식으로 생성해주세요.\n응답 형식:\n{\n  "title": "제목",\n  "main": "본문 내용",\n  "summary": "요약"\n}`}
-                      rows={10}
-                      className="font-mono text-sm"
-                    />
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      {'{{keyword}}'} 변수를 사용하면 자동으로 치환됩니다.
-                    </p>
-                  </div>
-                </div>
+                <PromptSelector
+                  value={customPrompt}
+                  aiModel={aiModel}
+                  onChange={setCustomPrompt}
+                  onAiModelChange={setAiModel}
+                />
               </div>
             )}
 
