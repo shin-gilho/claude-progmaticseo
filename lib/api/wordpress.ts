@@ -119,11 +119,11 @@ export async function createPost(auth: WPAuth, postData: WPPostData): Promise<WP
 }
 
 export async function getCategories(auth: WPAuth): Promise<WPCategory[]> {
-  return wpRequest<WPCategory[]>(auth, '/categories?per_page=100');
+  return wpRequest<WPCategory[]>(auth, '/categories?per_page=100&hide_empty=false');
 }
 
 export async function getTags(auth: WPAuth): Promise<WPTag[]> {
-  return wpRequest<WPTag[]>(auth, '/tags?per_page=100');
+  return wpRequest<WPTag[]>(auth, '/tags?per_page=100&hide_empty=false');
 }
 
 export async function createCategory(auth: WPAuth, name: string): Promise<WPCategory> {
