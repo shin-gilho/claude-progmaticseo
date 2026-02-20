@@ -21,7 +21,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, htmlContent, description } = body;
+    const { name, titleTemplate, htmlContent, description, rankMathFocusKeywords, rankMathDescription } = body;
 
     if (!name || !htmlContent) {
       return NextResponse.json(
@@ -33,8 +33,11 @@ export async function POST(request: NextRequest) {
     const template = await prisma.template.create({
       data: {
         name,
+        titleTemplate: titleTemplate || null,
         htmlContent,
         description: description || null,
+        rankMathFocusKeywords: rankMathFocusKeywords || null,
+        rankMathDescription: rankMathDescription || null,
       },
     });
 

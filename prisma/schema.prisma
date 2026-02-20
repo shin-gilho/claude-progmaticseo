@@ -11,13 +11,16 @@ datasource db {
 }
 
 model Template {
-  id          String   @id @default(cuid())
-  name        String
-  htmlContent String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  posts       Post[]
+  id                     String   @id @default(cuid())
+  name                   String
+  titleTemplate          String?  // Title pattern with {{variables}}
+  htmlContent            String
+  description            String?
+  rankMathFocusKeywords  String?  // RankMath focus keywords pattern (supports {{keyword}})
+  rankMathDescription    String?  // RankMath meta description pattern (supports {{keyword}})
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  posts                  Post[]
 }
 
 model Prompt {

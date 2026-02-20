@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { decrypt } from '@/lib/security/encryption';
+import { formatDiseaseCode } from '@/lib/utils/disease-code';
 
 export interface ClaudeOptions {
   model?: string;
@@ -62,15 +63,27 @@ export function buildPromptWithKeyword(
   keyword: string,
   additionalContext?: Record<string, string>
 ): string {
-  // Replace {{keyword}} (English)
-  let prompt = basePrompt.replace(/\{\{keyword\}\}/gi, keyword);
+  // Format disease code for SEO optimization
+  const formatted = formatDiseaseCode(keyword);
 
-  // Replace {{키워드}} (Korean)
-  prompt = prompt.replace(/\{\{키워드\}\}/g, keyword);
+  let prompt = basePrompt;
 
-  // Replace {{disease_code}} (common alias)
-  prompt = prompt.replace(/\{\{disease_code\}\}/gi, keyword);
+  // Replace {{keyword}} with original format (backward compatible)
+  prompt = prompt.replace(/\{\{keyword\}\}/gi, formatted.original);
 
+  // Replace {{keyword_normalized}} with SEO-friendly version (no dots)
+  prompt = prompt.replace(/\{\{keyword_normalized\}\}/gi, formatted.normalized);
+
+  // Replace {{keyword_display}} with content format (e.g., K529(K52.9))
+  prompt = prompt.replace(/\{\{keyword_display\}\}/gi, formatted.display);
+
+  // Replace {{키워드}} (Korean alias)
+  prompt = prompt.replace(/\{\{키워드\}\}/g, formatted.original);
+
+  // Replace {{disease_code}} (common alias, backward compatible)
+  prompt = prompt.replace(/\{\{disease_code\}\}/gi, formatted.original);
+
+  // Replace additional context variables
   if (additionalContext) {
     for (const [key, value] of Object.entries(additionalContext)) {
       const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'gi');

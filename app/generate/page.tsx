@@ -8,8 +8,13 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
 import { useDropzone } from 'react-dropzone';
-import { Upload, FileText, Sparkles } from 'lucide-react';
+import { Upload, FileText, Sparkles, RefreshCw } from 'lucide-react';
 import { PromptSelector } from '@/components/generate/prompt-selector';
+
+interface WPTaxonomy {
+  id: number;
+  name: string;
+}
 
 type Step = 1 | 2 | 3 | 4 | 5;
 
@@ -22,6 +27,12 @@ export default function GeneratePage() {
   const [keywords, setKeywords] = useState<string[]>([]);
   const [fileName, setFileName] = useState('');
   const [publishToWp, setPublishToWp] = useState(true);
+  const [wpCategories, setWpCategories] = useState<number[]>([]);
+  const [wpTags, setWpTags] = useState<number[]>([]);
+  const [wpStatus, setWpStatus] = useState<'draft' | 'publish' | 'pending'>('draft');
+  const [availableCategories, setAvailableCategories] = useState<WPTaxonomy[]>([]);
+  const [availableTags, setAvailableTags] = useState<WPTaxonomy[]>([]);
+  const [loadingWpData, setLoadingWpData] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [results, setResults] = useState<any>(null);
@@ -33,6 +44,35 @@ export default function GeneratePage() {
       .then((data) => setTemplates(data))
       .catch(console.error);
   }, []);
+
+  const fetchWordPressData = async () => {
+    setLoadingWpData(true);
+    try {
+      const [catRes, tagRes] = await Promise.all([
+        fetch('/api/wordpress/categories'),
+        fetch('/api/wordpress/tags'),
+      ]);
+      if (catRes.ok) {
+        const cats = await catRes.json();
+        setAvailableCategories(cats);
+      }
+      if (tagRes.ok) {
+        const tags = await tagRes.json();
+        setAvailableTags(tags);
+      }
+    } catch (error) {
+      console.error('Failed to fetch WordPress data:', error);
+    } finally {
+      setLoadingWpData(false);
+    }
+  };
+
+  // Auto-load categories/tags when publishToWp is enabled
+  useEffect(() => {
+    if (publishToWp) {
+      fetchWordPressData();
+    }
+  }, [publishToWp]);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -91,6 +131,9 @@ export default function GeneratePage() {
           aiModel,
           keywords,
           publishToWp,
+          wpCategories,
+          wpTags,
+          wpStatus,
         }),
       });
 
@@ -263,7 +306,8 @@ export default function GeneratePage() {
             {currentStep === 4 && (
               <div>
                 <h3 className="mb-6 text-lg font-semibold">Step 4: WordPress 설정</h3>
-                <div className="space-y-4">
+                <div className="space-y-6">
+                  {/* Publish toggle */}
                   <div className="flex items-center gap-2">
                     <input
                       type="checkbox"
@@ -273,9 +317,112 @@ export default function GeneratePage() {
                       className="h-4 w-4"
                     />
                     <label htmlFor="publishToWp" className="text-sm font-medium">
-                      WordPress에 자동 발행 (임시저장 상태)
+                      WordPress에 자동 발행
                     </label>
                   </div>
+
+                  {publishToWp && (
+                    <div className="space-y-6 rounded-lg border p-4">
+                      {/* Publish status */}
+                      <div>
+                        <label className="mb-2 block text-sm font-medium">발행 상태</label>
+                        <div className="flex gap-4">
+                          {(['draft', 'publish', 'pending'] as const).map((s) => (
+                            <label key={s} className="flex items-center gap-1.5 cursor-pointer">
+                              <input
+                                type="radio"
+                                name="wpStatus"
+                                value={s}
+                                checked={wpStatus === s}
+                                onChange={() => setWpStatus(s)}
+                                className="h-4 w-4"
+                              />
+                              <span className="text-sm">
+                                {s === 'draft' ? '임시저장' : s === 'publish' ? '발행' : '검토 대기'}
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Categories */}
+                      <div>
+                        <div className="mb-2 flex items-center justify-between">
+                          <label className="text-sm font-medium">카테고리 선택</label>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={fetchWordPressData}
+                            disabled={loadingWpData}
+                          >
+                            <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${loadingWpData ? 'animate-spin' : ''}`} />
+                            새로고침
+                          </Button>
+                        </div>
+                        {loadingWpData ? (
+                          <p className="text-sm text-muted-foreground">불러오는 중...</p>
+                        ) : availableCategories.length === 0 ? (
+                          <p className="text-sm text-muted-foreground">
+                            카테고리가 없거나 WordPress 연결을 확인하세요.
+                          </p>
+                        ) : (
+                          <div className="grid max-h-48 gap-2 overflow-y-auto rounded-lg border p-3 md:grid-cols-2">
+                            {availableCategories.map((cat) => (
+                              <label key={cat.id} className="flex cursor-pointer items-center gap-2">
+                                <input
+                                  type="checkbox"
+                                  checked={wpCategories.includes(cat.id)}
+                                  onChange={(e) => {
+                                    setWpCategories((prev) =>
+                                      e.target.checked
+                                        ? [...prev, cat.id]
+                                        : prev.filter((id) => id !== cat.id)
+                                    );
+                                  }}
+                                  className="h-4 w-4"
+                                />
+                                <span className="text-sm">{cat.name}</span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Tags */}
+                      <div>
+                        <label className="mb-2 block text-sm font-medium">태그 선택</label>
+                        {loadingWpData ? (
+                          <p className="text-sm text-muted-foreground">불러오는 중...</p>
+                        ) : availableTags.length === 0 ? (
+                          <p className="text-sm text-muted-foreground">
+                            태그가 없거나 WordPress 연결을 확인하세요.
+                          </p>
+                        ) : (
+                          <div className="grid max-h-48 gap-2 overflow-y-auto rounded-lg border p-3 md:grid-cols-2">
+                            {availableTags.map((tag) => (
+                              <label key={tag.id} className="flex cursor-pointer items-center gap-2">
+                                <input
+                                  type="checkbox"
+                                  checked={wpTags.includes(tag.id)}
+                                  onChange={(e) => {
+                                    setWpTags((prev) =>
+                                      e.target.checked
+                                        ? [...prev, tag.id]
+                                        : prev.filter((id) => id !== tag.id)
+                                    );
+                                  }}
+                                  className="h-4 w-4"
+                                />
+                                <span className="text-sm">{tag.name}</span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   <p className="text-sm text-muted-foreground">
                     WordPress 연결 설정은 설정 페이지에서 확인할 수 있습니다.
                   </p>
@@ -309,6 +456,36 @@ export default function GeneratePage() {
                           {publishToWp ? '예' : '아니오'}
                         </span>
                       </div>
+                      {publishToWp && (
+                        <>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">발행 상태:</span>
+                            <span className="font-medium">
+                              {wpStatus === 'draft' ? '임시저장' : wpStatus === 'publish' ? '발행' : '검토 대기'}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">카테고리:</span>
+                            <span className="font-medium">
+                              {wpCategories.length > 0
+                                ? wpCategories
+                                    .map((id) => availableCategories.find((c) => c.id === id)?.name ?? id)
+                                    .join(', ')
+                                : '없음'}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">태그:</span>
+                            <span className="font-medium">
+                              {wpTags.length > 0
+                                ? wpTags
+                                    .map((id) => availableTags.find((t) => t.id === id)?.name ?? id)
+                                    .join(', ')
+                                : '없음'}
+                            </span>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
 

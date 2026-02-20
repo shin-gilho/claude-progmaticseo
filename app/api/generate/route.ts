@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { generateWithClaude, buildPromptWithKeyword } from '@/lib/api/claude';
 import { generateWithGemini } from '@/lib/api/gemini';
-import { createPost as createWPPost } from '@/lib/api/wordpress';
+import { createPost as createWPPost, buildRankMathMetadata } from '@/lib/api/wordpress';
 import { parseAIResponse } from '@/lib/template-engine/parser';
 import { renderTemplate } from '@/lib/template-engine/renderer';
 import { extractVariables } from '@/lib/template-engine/variable-extractor';
+import { extractTitle } from '@/lib/template-engine/title-extractor';
 import { processBatch, createBatchItems, DEFAULT_BATCH_CONFIG } from '@/lib/batch/processor';
+import { formatDiseaseCode } from '@/lib/utils/disease-code';
 
 interface GenerateRequest {
   templateId: string;
@@ -15,8 +17,9 @@ interface GenerateRequest {
   aiModel: 'claude' | 'gemini';
   keywords: string[];
   publishToWp: boolean;
-  wpCategory?: number;
+  wpCategories?: number[];
   wpTags?: number[];
+  wpStatus?: 'draft' | 'publish' | 'pending';
 }
 
 // POST /api/generate - 콘텐츠 생성 시작
@@ -30,8 +33,9 @@ export async function POST(request: NextRequest) {
       aiModel,
       keywords,
       publishToWp,
-      wpCategory,
+      wpCategories,
       wpTags,
+      wpStatus,
     } = body;
 
     // Validation
@@ -120,16 +124,27 @@ export async function POST(request: NextRequest) {
         // Parse AI response
         const parsedResponse = parseAIResponse(aiResponse);
 
-        // Render template with multiple variable aliases for compatibility
-        const renderedContent = renderTemplate(template.htmlContent, {
-          ...parsedResponse,
-          keyword,           // English variable
-          disease_code: keyword,  // Common alias
-          키워드: keyword,        // Korean variable
-        });
+        // Format disease code for SEO optimization
+        const formatted = formatDiseaseCode(keyword);
 
-        // Generate title
-        const title = parsedResponse.title || parsedResponse.제목 || `${keyword} - 상세 정보`;
+        // Prepare variables for rendering (shared between title and content)
+        const templateVariables = {
+          ...parsedResponse,
+          keyword: formatted.original,              // Original format (e.g., "K52.9")
+          keyword_normalized: formatted.normalized, // SEO-friendly (e.g., "K529")
+          keyword_display: formatted.display,       // Content format (e.g., "K529(K52.9)")
+          disease_code: formatted.original,         // Alias for backward compatibility
+          키워드: formatted.original,                 // Korean alias
+        };
+
+        // Render template content
+        const renderedContent = renderTemplate(template.htmlContent, templateVariables);
+
+        // Extract title from template (NEW APPROACH)
+        const extractedTitle = extractTitle(template.titleTemplate, templateVariables);
+
+        // Fallback to AI title or default if template has no title
+        const title = extractedTitle || parsedResponse.title || parsedResponse.제목 || `${keyword} - 상세 정보`;
 
         return {
           title,
@@ -151,6 +166,13 @@ export async function POST(request: NextRequest) {
         // Publish to WordPress if enabled
         if (publishToWp) {
           try {
+            // Build RankMath metadata from template settings
+            const rankMathMeta = buildRankMathMetadata(
+              keyword,
+              template.rankMathFocusKeywords,
+              template.rankMathDescription
+            );
+
             const wpResult = await createWPPost(
               {
                 siteUrl: settings.wpSiteUrl,
@@ -160,9 +182,15 @@ export async function POST(request: NextRequest) {
               {
                 title: item.result.title,
                 content: item.result.content,
-                status: 'draft',
-                categories: wpCategory ? [wpCategory] : undefined,
-                tags: wpTags,
+                status: wpStatus || 'draft',
+                categories: wpCategories && wpCategories.length > 0 ? wpCategories : undefined,
+                tags: wpTags && wpTags.length > 0 ? wpTags : undefined,
+                meta: rankMathMeta
+                  ? {
+                      ...rankMathMeta,
+                      rank_math_title: item.result.title, // SEO title = post title
+                    }
+                  : undefined,
               }
             );
             wpPostId = wpResult.id;

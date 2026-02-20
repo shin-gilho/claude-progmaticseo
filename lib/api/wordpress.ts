@@ -12,6 +12,14 @@ export interface WPPostData {
   status: 'draft' | 'publish' | 'pending' | 'private';
   categories?: number[];
   tags?: number[];
+  meta?: {
+    // RankMath SEO 필드
+    rank_math_focus_keyword?: string;
+    rank_math_description?: string;
+    rank_math_title?: string;
+    // 기타 커스텀 메타 필드
+    [key: string]: any;
+  };
 }
 
 export interface WPPost {
@@ -33,6 +41,41 @@ export interface WPTag {
   name: string;
   slug: string;
   count: number;
+}
+
+/**
+ * Build RankMath SEO metadata from template settings and keyword
+ * @param keyword - Keyword to substitute in patterns (e.g., "R1049")
+ * @param focusKeywordsPattern - Focus keywords pattern from template (supports {{keyword}})
+ * @param descriptionPattern - Meta description pattern from template (supports {{keyword}})
+ * @returns RankMath meta object (returns null if patterns are not provided)
+ */
+export function buildRankMathMetadata(
+  keyword: string,
+  focusKeywordsPattern?: string | null,
+  descriptionPattern?: string | null
+) {
+  // If no patterns provided, return null (no RankMath metadata)
+  if (!focusKeywordsPattern && !descriptionPattern) {
+    return null;
+  }
+
+  const result: {
+    rank_math_focus_keyword?: string;
+    rank_math_description?: string;
+  } = {};
+
+  // Replace {{keyword}} in focus keywords pattern
+  if (focusKeywordsPattern) {
+    result.rank_math_focus_keyword = focusKeywordsPattern.replace(/\{\{keyword\}\}/g, keyword);
+  }
+
+  // Replace {{keyword}} in description pattern
+  if (descriptionPattern) {
+    result.rank_math_description = descriptionPattern.replace(/\{\{keyword\}\}/g, keyword);
+  }
+
+  return result;
 }
 
 async function wpRequest<T>(

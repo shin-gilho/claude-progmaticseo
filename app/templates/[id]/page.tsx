@@ -38,8 +38,11 @@ export default async function EditTemplatePage({ params }: PageProps) {
             initialData={{
               id: template.id,
               name: template.name,
+              titleTemplate: template.titleTemplate || '',
               description: template.description || '',
               htmlContent: template.htmlContent,
+              rankMathFocusKeywords: template.rankMathFocusKeywords || '',
+              rankMathDescription: template.rankMathDescription || '',
             }}
           />
         </div>

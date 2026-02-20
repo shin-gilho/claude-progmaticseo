@@ -35,14 +35,17 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
     const body = await request.json();
-    const { name, htmlContent, description } = body;
+    const { name, titleTemplate, htmlContent, description, rankMathFocusKeywords, rankMathDescription } = body;
 
     const template = await prisma.template.update({
       where: { id },
       data: {
         ...(name && { name }),
+        ...(titleTemplate !== undefined && { titleTemplate }),
         ...(htmlContent && { htmlContent }),
         ...(description !== undefined && { description }),
+        ...(rankMathFocusKeywords !== undefined && { rankMathFocusKeywords }),
+        ...(rankMathDescription !== undefined && { rankMathDescription }),
       },
     });
 
