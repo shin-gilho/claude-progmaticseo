@@ -10,6 +10,10 @@ export function extractVariables(template: string): string[] {
 
   while ((match = regex.exec(template)) !== null) {
     const variable = match[1].trim();
+    // Skip Handlebars block helpers: {{#if}}, {{/if}}, {{#each}}, {{else}}, etc.
+    if (/^[#\/\^>@]/.test(variable) || variable === 'else') continue;
+    // Skip expressions with spaces (e.g. "if condition", "each items")
+    if (/\s/.test(variable)) continue;
     variables.add(variable);
   }
 
@@ -23,6 +27,10 @@ export function extractVariablesWithPositions(template: string): ExtractedVariab
 
   while ((match = regex.exec(template)) !== null) {
     const variable = match[1].trim();
+    // Skip Handlebars block helpers: {{#if}}, {{/if}}, {{#each}}, {{else}}, etc.
+    if (/^[#\/\^>@]/.test(variable) || variable === 'else') continue;
+    // Skip expressions with spaces (e.g. "if condition", "each items")
+    if (/\s/.test(variable)) continue;
     const positions = variableMap.get(variable) || [];
     positions.push(match.index);
     variableMap.set(variable, positions);

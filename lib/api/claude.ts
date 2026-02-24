@@ -11,7 +11,7 @@ export interface ClaudeOptions {
 const DEFAULT_OPTIONS: ClaudeOptions = {
   model: 'claude-sonnet-4-20250514',
   maxTokens: 4096,
-  temperature: 0.7,
+  temperature: 0.3,
 };
 
 export async function generateWithClaude(

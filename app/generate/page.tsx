@@ -37,6 +37,16 @@ export default function GeneratePage() {
   const [progress, setProgress] = useState(0);
   const [results, setResults] = useState<any>(null);
 
+  interface ProgressInfo {
+    current: number;
+    total: number;
+    keyword: string;
+    stepLabel: string;
+    success: number;
+    failed: number;
+  }
+  const [progressInfo, setProgressInfo] = useState<ProgressInfo | null>(null);
+
   // Fetch templates on mount
   useEffect(() => {
     fetch('/api/templates')
@@ -120,6 +130,7 @@ export default function GeneratePage() {
 
     setIsGenerating(true);
     setProgress(0);
+    setProgressInfo(null);
 
     try {
       const response = await fetch('/api/generate', {
@@ -137,15 +148,81 @@ export default function GeneratePage() {
         }),
       });
 
-      const result = await response.json();
+      // Validation errors are returned as JSON (non-SSE)
+      if (!response.ok) {
+        const err = await response.json();
+        alert(err.error || '콘텐츠 생성에 실패했습니다.');
+        return;
+      }
 
-      if (result.success) {
-        setResults(result);
-        alert(
-          `생성 완료!\n성공: ${result.summary.success}개\n실패: ${result.summary.failed}개`
-        );
-      } else {
-        alert('콘텐츠 생성에 실패했습니다.');
+      if (!response.body) {
+        alert('스트리밍을 지원하지 않는 환경입니다.');
+        return;
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        // SSE events are separated by double newline
+        const eventBlocks = buffer.split('\n\n');
+        buffer = eventBlocks.pop() ?? '';
+
+        for (const block of eventBlocks) {
+          const line = block.trim();
+          if (!line.startsWith('data: ')) continue;
+          try {
+            const event = JSON.parse(line.slice(6));
+
+            if (event.type === 'start') {
+              setProgressInfo({
+                current: 0,
+                total: event.total,
+                keyword: '',
+                stepLabel: '시작 중...',
+                success: 0,
+                failed: 0,
+              });
+            } else if (event.type === 'step') {
+              setProgressInfo((prev) => ({
+                current: prev?.current ?? 0,
+                total: event.total,
+                keyword: event.keyword,
+                stepLabel: event.stepLabel,
+                success: prev?.success ?? 0,
+                failed: prev?.failed ?? 0,
+              }));
+            } else if (event.type === 'item_done') {
+              const newSuccess = (event.status === 'success' ? 1 : 0);
+              const newFailed = (event.status === 'failed' ? 1 : 0);
+              setProgressInfo((prev) => ({
+                current: event.current,
+                total: event.total,
+                keyword: event.keyword,
+                stepLabel: event.status === 'success' ? '완료' : '실패',
+                success: (prev?.success ?? 0) + newSuccess,
+                failed: (prev?.failed ?? 0) + newFailed,
+              }));
+              setProgress(Math.floor((event.current / event.total) * 100));
+            } else if (event.type === 'complete') {
+              setResults({ success: true, summary: event.summary, results: event.results });
+              setProgress(100);
+              alert(
+                `생성 완료!\n성공: ${event.summary.success}개\n실패: ${event.summary.failed}개`
+              );
+            } else if (event.type === 'error') {
+              alert(`생성 오류: ${event.message}`);
+            }
+          } catch {
+            // Ignore malformed event
+          }
+        }
       }
     } catch (error) {
       alert('생성 중 오류가 발생했습니다.');
@@ -490,11 +567,29 @@ export default function GeneratePage() {
                   </div>
 
                   {isGenerating && (
-                    <div>
-                      <Progress value={progress} className="mb-2" />
-                      <p className="text-center text-sm text-muted-foreground">
-                        생성 중... {progress}%
-                      </p>
+                    <div className="space-y-2">
+                      <Progress value={progress} className="mb-1" />
+                      {progressInfo ? (
+                        <div className="space-y-1 text-sm text-muted-foreground">
+                          <div className="flex justify-between">
+                            <span>{progressInfo.current}/{progressInfo.total} 처리 중</span>
+                            <span>
+                              <span className="text-green-600">성공 {progressInfo.success}개</span>
+                              {' | '}
+                              <span className="text-red-600">실패 {progressInfo.failed}개</span>
+                            </span>
+                          </div>
+                          {progressInfo.keyword && (
+                            <p className="text-xs">
+                              현재: {progressInfo.keyword} — {progressInfo.stepLabel}
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-center text-sm text-muted-foreground">
+                          생성 중... {progress}%
+                        </p>
+                      )}
                     </div>
                   )}
 

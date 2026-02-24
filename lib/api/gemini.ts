@@ -11,7 +11,7 @@ export interface GeminiOptions {
 const DEFAULT_OPTIONS: GeminiOptions = {
   model: 'gemini-2.5-flash',
   maxTokens: 8192,
-  temperature: 0.7,
+  temperature: 0.3,
 };
 
 export async function generateWithGemini(
@@ -28,6 +28,7 @@ export async function generateWithGemini(
     generationConfig: {
       maxOutputTokens: mergedOptions.maxTokens,
       temperature: mergedOptions.temperature,
+      responseMimeType: 'application/json',
     },
   });
 

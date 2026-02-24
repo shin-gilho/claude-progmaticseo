@@ -118,6 +118,17 @@ export async function createPost(auth: WPAuth, postData: WPPostData): Promise<WP
   });
 }
 
+export async function updatePost(
+  auth: WPAuth,
+  postId: number,
+  postData: Partial<WPPostData>
+): Promise<WPPost> {
+  return wpRequest<WPPost>(auth, `/posts/${postId}`, {
+    method: 'POST',
+    body: JSON.stringify(postData),
+  });
+}
+
 export async function getCategories(auth: WPAuth): Promise<WPCategory[]> {
   return wpRequest<WPCategory[]>(auth, '/categories?per_page=100&hide_empty=false');
 }
