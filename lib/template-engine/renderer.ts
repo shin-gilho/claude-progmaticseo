@@ -1,6 +1,17 @@
 import Handlebars from 'handlebars';
 import { extractVariables } from './variable-extractor';
 
+// Register comparison helpers (Handlebars does not include these by default)
+Handlebars.registerHelper('eq',  (a: any, b: any) => a === b);
+Handlebars.registerHelper('ne',  (a: any, b: any) => a !== b);
+Handlebars.registerHelper('gt',  (a: any, b: any) => a > b);
+Handlebars.registerHelper('lt',  (a: any, b: any) => a < b);
+Handlebars.registerHelper('gte', (a: any, b: any) => a >= b);
+Handlebars.registerHelper('lte', (a: any, b: any) => a <= b);
+Handlebars.registerHelper('and', (...args: any[]) => args.slice(0, -1).every(Boolean));
+Handlebars.registerHelper('or',  (...args: any[]) => args.slice(0, -1).some(Boolean));
+Handlebars.registerHelper('not', (a: any) => !a);
+
 function escapeRegex(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

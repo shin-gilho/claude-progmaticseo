@@ -1,10 +1,48 @@
+function sanitizeJSON(str: string): string {
+  let inString = false;
+  let escaped = false;
+  let result = '';
+
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+
+    if (escaped) {
+      result += char;
+      escaped = false;
+      continue;
+    }
+
+    if (char === '\\') {
+      result += char;
+      escaped = true;
+      continue;
+    }
+
+    if (char === '"') {
+      inString = !inString;
+      result += char;
+      continue;
+    }
+
+    if (inString) {
+      if (char === '\n') { result += '\\n'; continue; }
+      if (char === '\r') { result += '\\r'; continue; }
+      if (char === '\t') { result += '\\t'; continue; }
+    }
+
+    result += char;
+  }
+
+  return result;
+}
+
 export function parseAIResponse(response: string): Record<string, any> {
   // Extract JSON from code blocks if present
   const jsonBlockMatch = response.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
   const jsonString = jsonBlockMatch ? jsonBlockMatch[1] : response;
 
   try {
-    const parsed = JSON.parse(jsonString.trim());
+    const parsed = JSON.parse(sanitizeJSON(jsonString.trim()));
 
     // Preserve types for Handlebars template engine
     const result: Record<string, any> = {};

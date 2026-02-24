@@ -12,7 +12,20 @@
       "Bash(git push:*)",
       "Bash(sqlite3:*)",
       "Bash(node:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(ls:*)",
+      "WebSearch",
+      "Bash(tasklist:*)",
+      "Bash(findstr:*)",
+      "Bash(netstat:*)",
+      "Bash(npm run dev:*)",
+      "Bash(timeout:*)",
+      "Bash(npm search:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(npx -y @modelcontextprotocol/server-git --version)",
+      "Bash(npx -y @mseep/git-mcp-server --version)",
+      "Bash(ping:*)",
+      "Bash(find:*)"
     ]
   }
 }
